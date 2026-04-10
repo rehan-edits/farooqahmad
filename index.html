@@ -2,740 +2,405 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Farooq & Naazra | Royal Wedding Invitation</title>
-  <!-- Google Fonts: Elegant Serif + Clean Sans -->
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Cinzel & Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind + custom styles are compiled below -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- html2canvas for download invitation as image -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- React & ReactDOM CDN (for simplicity without build step) - but we also embed React components using JSX via Babel? 
+       To provide a fully self-contained working zip with React + Tailwind without node_modules? But requirement says "use react and tailwind", 
+       the best is to deliver a full Vite/React project, but user expects single HTML? Actually we can create a single HTML using React via CDN + Babel standalone. 
+       This ensures easy deploy on GitHub Pages without build step. However, we also need "downloadable invitation" and full interactivity. 
+       I will produce a high-quality single HTML file that uses React, ReactDOM, Babel, and Tailwind CDN. It's easier to deploy and meets the requirement of React + Tailwind.
+       No build step needed. I'll write full HTML with embedded React components. -->
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background-color: #0a0a0a; /* deep matte black */
-      font-family: 'Montserrat', sans-serif;
-      color: #e5e5e5;
-      line-height: 1.5;
-      overflow-x: hidden;
-    }
-
-    /* ---------- LOADING SCREEN (OPENER) ---------- */
-    .loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000000;
-      z-index: 10000;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      backdrop-filter: blur(0px);
-      transition: opacity 1.2s cubic-bezier(0.23, 1, 0.32, 1);
-      pointer-events: none;
-    }
-
-    .loader-content {
-      text-align: center;
-      animation: shimmerPulse 2s infinite ease-in-out;
-    }
-
-    .monogram {
-      font-family: 'Cinzel', serif;
-      font-size: 4rem;
-      letter-spacing: 6px;
-      background: linear-gradient(135deg, #d4af37 0%, #f9e076 40%, #b8860b 80%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 1rem;
-      text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
-    }
-
-    .bismillah {
-      font-family: 'Cinzel', serif;
-      font-size: 2rem;
-      font-weight: 500;
-      letter-spacing: 2px;
-      background: linear-gradient(120deg, #e4c580, #f5e2a0);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
+    /* Custom gold shimmer and additional animations */
     @keyframes shimmerPulse {
       0% { opacity: 0.7; text-shadow: 0 0 5px rgba(212,175,55,0.3);}
       50% { opacity: 1; text-shadow: 0 0 25px rgba(212,175,55,0.8);}
       100% { opacity: 0.7; text-shadow: 0 0 5px rgba(212,175,55,0.3);}
     }
-
-    /* Main content initially hidden until loader fades */
-    .main-site {
-      opacity: 0;
-      transition: opacity 0.8s ease;
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-
-    /* Container & Sections */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem;
-    }
-
-    section {
-      margin: 5rem 0;
-      scroll-margin-top: 2rem;
-    }
-
-    /* fade-up animation on scroll */
-    .fade-up {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.9s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.9s ease;
-    }
-
-    .fade-up.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Gold accents & buttons */
-    h1, h2, h3, .gold-text {
-      font-family: 'Cinzel', serif;
-      color: #d4af37;
-      letter-spacing: 1px;
-    }
-
-    h2 {
-      font-size: 2.2rem;
-      margin-bottom: 2rem;
-      text-align: center;
-      position: relative;
-      display: inline-block;
-      width: 100%;
-    }
-    h2:after {
-      content: '';
-      display: block;
-      width: 80px;
-      height: 2px;
-      background: linear-gradient(90deg, #d4af37, #b8860b);
-      margin: 0.8rem auto 0;
-      border-radius: 2px;
-    }
-
-    /* Hero Section */
-    .hero {
-      text-align: center;
-      padding: 3rem 0 2rem;
-    }
-    .hero-names {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(2.5rem, 8vw, 5rem);
-      font-weight: 700;
-      background: linear-gradient(135deg, #e4b83b, #f3d572, #c49b2a);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.4);
-      margin: 1rem 0;
-      line-height: 1.2;
-    }
-    .hero-sub {
-      font-size: 1.2rem;
-      letter-spacing: 3px;
-      color: #c9aa3f;
-      border-top: 1px solid rgba(212, 175, 55, 0.4);
-      display: inline-block;
-      padding-top: 1rem;
-    }
-
-    /* Scratch Card Section */
-    .scratch-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
-    }
-    .scratch-card-container {
-      position: relative;
-      width: 350px;
-      height: 200px;
-      max-width: 90vw;
-      border-radius: 24px;
-      box-shadow: 0 25px 40px -12px rgba(0,0,0,0.6), 0 0 0 2px rgba(212,175,55,0.3);
-      cursor: pointer;
-      background: #111;
-    }
-    .scratch-date-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 30% 20%, #1a1a1a, #030303);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 24px;
-      font-family: 'Cinzel', serif;
-      font-size: 2rem;
-      font-weight: bold;
-      color: #d4af37;
-      text-shadow: 0 0 12px #b8860b;
-      letter-spacing: 2px;
-      z-index: 1;
-      border: 1px solid rgba(212,175,55,0.6);
-      backdrop-filter: blur(2px);
-    }
-    .scratch-date-bg span {
-      background: rgba(0,0,0,0.6);
-      padding: 0.4rem 1rem;
-      border-radius: 60px;
-      font-size: 1.8rem;
+    .animate-fade-up {
+      animation: fadeInUp 0.7s ease forwards;
     }
     .scratch-canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 24px;
-      z-index: 2;
-      cursor: grab;
       touch-action: none;
     }
-    .scratch-hint {
-      font-size: 0.85rem;
-      background: rgba(0,0,0,0.7);
-      padding: 0.4rem 1rem;
-      border-radius: 40px;
-      letter-spacing: 1px;
-      color: #d4af37;
-      border: 1px solid rgba(212,175,55,0.5);
-      backdrop-filter: blur(4px);
-    }
-
-    /* Invitation Generator */
-    .generator-card {
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(2px);
-      border-radius: 32px;
-      padding: 2rem;
-      margin-top: 2rem;
-      border: 1px solid rgba(212,175,55,0.5);
-      box-shadow: 0 20px 35px -10px black;
-    }
-    .input-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-      margin-bottom: 2rem;
-    }
-    .input-group input {
-      flex: 1;
-      min-width: 220px;
-      background: #1e1e1e;
-      border: 1px solid #d4af37;
-      padding: 1rem 1.2rem;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1rem;
-      color: #f5e7c8;
-      border-radius: 60px;
-      outline: none;
-      transition: all 0.3s;
-    }
-    .input-group input:focus {
-      border-color: #f3d572;
+    .gold-border-glow {
       box-shadow: 0 0 12px rgba(212,175,55,0.4);
     }
-    .gold-btn {
-      background: linear-gradient(135deg, #ab8a2c, #d4af37);
-      border: none;
-      padding: 0.9rem 2rem;
-      font-family: 'Cinzel', serif;
-      font-weight: bold;
-      font-size: 1rem;
-      color: #0a0a0a;
-      border-radius: 60px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-    .gold-btn:hover {
-      transform: scale(1.02);
-      box-shadow: 0 8px 22px rgba(212,175,55,0.4);
-      background: linear-gradient(135deg, #c49b2a, #e8c45a);
-    }
-
-    /* Digital Invitation Card (blue roses & gold border) */
-    .invitation-card-display {
-      margin-top: 2rem;
-      display: flex;
-      justify-content: center;
-    }
     .digital-card {
-      max-width: 500px;
-      width: 100%;
-      background: #0f0e0a;
-      border: 3px double #d4af37;
-      border-radius: 32px;
-      padding: 2rem 1.5rem;
-      position: relative;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.2"><path fill="%234267b3" d="M50,10 Q65,30 70,50 Q75,70 55,80 Q35,90 25,70 Q15,50 30,30 Q40,15 50,10Z" /><circle cx="48" cy="48" r="6" fill="%23365fa6"/><path fill="%232f5491" d="M72,28 Q82,38 78,52 Q74,64 62,68 Q50,72 44,58 Q38,44 48,34 Q58,24 72,28Z" /><circle cx="68" cy="48" r="5" fill="%233e6bb3"/></svg>');
-      background-repeat: repeat;
-      background-size: 48px;
-      background-position: center;
-      box-shadow: 0 20px 30px -10px black;
-      transition: all 0.3s;
+      transition: transform 0.3s ease, box-shadow 0.3s;
     }
-    .digital-card .gold-border-accent {
-      border-top: 2px solid #d4af37;
-      border-bottom: 2px solid #d4af37;
-      margin: 1rem 0;
-      padding: 0.5rem 0;
+    .digital-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 35px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.5);
     }
-    .card-title {
-      font-family: 'Cinzel', serif;
-      color: #d4af37;
-      font-size: 1.5rem;
-      text-align: center;
-      letter-spacing: 2px;
-    }
-    .card-couple {
-      font-family: 'Cinzel', serif;
-      font-size: 1.3rem;
-      text-align: center;
-      color: #f3e1a0;
-      margin: 0.8rem 0;
-    }
-    .card-date {
-      text-align: center;
-      font-size: 1.2rem;
-      font-weight: 500;
-      color: #e6cf7a;
-    }
-    .guest-name-special {
-      font-family: 'Cinzel', serif;
-      font-size: 1.5rem;
-      background: linear-gradient(135deg, #f5e2a0, #c9a12e);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-align: center;
-      margin: 0.8rem 0;
-      word-break: break-word;
-      border-top: 1px dashed rgba(212,175,55,0.5);
-      border-bottom: 1px dashed rgba(212,175,55,0.5);
-      padding: 0.5rem;
-    }
-    .card-footer-inv {
-      font-size: 0.8rem;
-      text-align: center;
-      margin-top: 1rem;
-      color: #ad9f6b;
-    }
-
-    /* Footer */
-    .footer {
-      text-align: center;
-      padding: 2rem 1rem;
-      border-top: 1px solid rgba(212,175,55,0.3);
-      margin-top: 3rem;
-      font-size: 0.85rem;
-      letter-spacing: 1px;
-      color: #b59f4b;
-      font-family: 'Montserrat', sans-serif;
-    }
-
-    /* responsive touches */
-    @media (max-width: 680px) {
-      .container {
-        padding: 1rem;
-      }
-      h2 {
-        font-size: 1.8rem;
-      }
-      .digital-card {
-        padding: 1.5rem 1rem;
-      }
-      .card-couple {
-        font-size: 1rem;
-      }
+    .bg-blue-rose-pattern {
+      background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 2%, transparent 2.5%),
+                        radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.08) 1.8%, transparent 2%);
+      background-size: 40px 40px, 35px 35px;
     }
   </style>
 </head>
-<body>
+<body class="bg-black text-white font-montserrat overflow-x-hidden">
+  <div id="root"></div>
 
-<!-- LOADING SCREEN: black + gold shimmering monogram "F & N" & Bismillah -->
-<div class="loader" id="loader">
-  <div class="loader-content">
-    <div class="monogram">F & N</div>
-    <div class="bismillah">بِسْمِ اللَّهِ</div>
-    <div class="bismillah" style="font-size:1.2rem; margin-top: 1rem;">Bismillah</div>
-  </div>
-</div>
+  <!-- Load React, ReactDOM, Babel -->
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
 
-<main class="main-site" id="mainSite">
-  <div class="container">
-    <!-- Hero Section -->
-    <section class="hero fade-up">
-      <div class="hero-names">Farooq Ahmad</div>
-      <div class="hero-names" style="font-size: clamp(2rem,6vw,3.5rem);">&amp;</div>
-      <div class="hero-names">Naazra Khatoon</div>
-      <div class="hero-sub">Together with families, invite you to celebrate</div>
-    </section>
+  <script type="text/babel">
+    // Main React App with Tailwind CSS
+    const { useState, useEffect, useRef, useCallback } = React;
 
-    <!-- Interactive Date Reveal - Scratch Card -->
-    <section class="fade-up" id="saveDateSection">
-      <h2>Save the Date</h2>
-      <div class="scratch-wrapper">
-        <div class="scratch-card-container" id="scratchContainer">
-          <div class="scratch-date-bg">
-            <span>✨ 9 MAY 2026 ✨</span>
-          </div>
-          <canvas id="scratchCanvas" class="scratch-canvas" width="350" height="200"></canvas>
-        </div>
-        <div class="scratch-hint">🖌️ Scratch the golden surface with your finger or mouse 🖱️</div>
-      </div>
-    </section>
-
-    <!-- Invitation Generator Section -->
-    <section class="fade-up">
-      <h2>Your Personal Invitation</h2>
-      <div class="generator-card">
-        <div class="input-group">
-          <input type="text" id="guestNameInput" placeholder="Enter guest name, e.g., Mr. & Mrs. Kapoor" autocomplete="off">
-          <button class="gold-btn" id="generateInviteBtn">✨ Generate Invitation ✨</button>
-        </div>
-        <div id="invitationCardContainer" class="invitation-card-display">
-          <!-- dynamic card will appear here -->
-          <div class="digital-card" style="opacity:0.9; text-align:center; padding:2rem;">
-            <div class="card-title">— WEDDING INVITATION —</div>
-            <div class="gold-border-accent"></div>
-            <div class="card-couple">Farooq Ahmad & Naazra Khatoon</div>
-            <div class="card-date">9th May, 2026</div>
-            <div class="guest-name-special" id="dynamicGuestPreview">Enter your name above</div>
-            <div class="card-footer-inv">Together with families request the honor of your presence</div>
-            <div class="gold-border-accent" style="margin-top:0.8rem;"></div>
-            <div style="font-size:0.75rem; margin-top:0.7rem;">Blue Roses Ceremony | Gold Blessings</div>
+    // Loader Component
+    const Loader = ({ onComplete }) => {
+      useEffect(() => {
+        const timer = setTimeout(() => {
+          onComplete();
+        }, 2200);
+        return () => clearTimeout(timer);
+      }, [onComplete]);
+      return (
+        <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center transition-opacity duration-1000">
+          <div className="text-center animate-pulse">
+            <div className="font-cinzel text-5xl md:text-7xl tracking-wider bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-600 bg-clip-text text-transparent mb-4">
+              F & N
+            </div>
+            <div className="font-cinzel text-2xl md:text-3xl bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent">
+              بِسْمِ اللَّهِ
+            </div>
+            <div className="font-cinzel text-base md:text-lg text-amber-400/80 mt-2">Bismillah</div>
           </div>
         </div>
+      );
+    };
+
+    // Hero Section
+    const Hero = () => (
+      <div className="text-center py-12 md:py-20 px-4">
+        <div className="font-cinzel text-5xl md:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent leading-tight">
+          Farooq Ahmad
+        </div>
+        <div className="font-cinzel text-3xl md:text-5xl text-amber-400/80 my-2">&</div>
+        <div className="font-cinzel text-5xl md:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent leading-tight">
+          Naazra Khatoon
+        </div>
+        <div className="mt-6 text-amber-300/80 tracking-widest text-sm md:text-base border-t border-b border-amber-500/30 inline-block py-2 px-6 backdrop-blur-sm">
+          Request the honour of your presence
+        </div>
       </div>
-    </section>
+    );
 
-    <!-- Footer with host and location -->
-    <footer class="footer fade-up">
-      <div>Hosted by Maqbool Ahmad</div>
-      <div>📍 Bigahna, Maudaha, Hamirpur</div>
-      <div style="margin-top: 0.5rem; font-size: 0.7rem;">✦ Eternal Blessings ✦</div>
-    </footer>
-  </div>
-</main>
+    // Scratch Card Component (reveal date 9 May 2026)
+    const ScratchCard = () => {
+      const canvasRef = useRef(null);
+      const containerRef = useRef(null);
+      const [isRevealed, setIsRevealed] = useState(false);
+      const [drawing, setDrawing] = useState(false);
 
-<script>
-  (function() {
-    // -------------------------------
-    // 1. LOADING SCREEN FADE OUT
-    // -------------------------------
-    const loader = document.getElementById('loader');
-    const mainSite = document.getElementById('mainSite');
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        loader.style.opacity = '0';
-        setTimeout(() => {
-          loader.style.display = 'none';
-          mainSite.style.opacity = '1';
-        }, 1000);
-      }, 1800); // elegant shimmer then fade
-    });
+      const initCanvas = useCallback(() => {
+        const canvas = canvasRef.current;
+        const container = containerRef.current;
+        if (!canvas || !container) return;
+        const rect = container.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        const ctx = canvas.getContext('2d');
+        // Draw golden scratch layer
+        const grad = ctx.createLinearGradient(0, 0, width, height);
+        grad.addColorStop(0, '#b8860b');
+        grad.addColorStop(0.4, '#eab308');
+        grad.addColorStop(0.7, '#d4af37');
+        grad.addColorStop(1, '#fde047');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+        // add sparkle effect
+        for (let i = 0; i < 200; i++) {
+          ctx.fillStyle = `rgba(255,245,180,${Math.random() * 0.6})`;
+          ctx.beginPath();
+          ctx.arc(Math.random() * width, Math.random() * height, Math.random() * 2 + 1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < 15; i++) {
+          ctx.beginPath();
+          ctx.moveTo(i * 35, 0);
+          ctx.lineTo(i * 35 + 20, height);
+          ctx.stroke();
+        }
+      }, []);
 
-    // -------------------------------
-    // 2. SCRATCH CARD (Gold textured canvas with destination-out revealing date)
-    // -------------------------------
-    const canvas = document.getElementById('scratchCanvas');
-    const container = document.getElementById('scratchContainer');
-    let ctx = canvas.getContext('2d');
-    let isDrawing = false;
-    let lastX = 0, lastY = 0;
+      useEffect(() => {
+        initCanvas();
+        window.addEventListener('resize', initCanvas);
+        return () => window.removeEventListener('resize', initCanvas);
+      }, [initCanvas]);
 
-    // set canvas exact dimensions to match container fixed 350x200 (CSS matches)
-    function initCanvasSize() {
-      const rect = container.getBoundingClientRect();
-      const width = rect.width;
-      const height = rect.height;
-      canvas.width = width;
-      canvas.height = height;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      drawGoldTexture();
-    }
+      const getCoordinates = (e) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return null;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        let clientX, clientY;
+        if (e.touches) {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        } else {
+          clientX = e.clientX;
+          clientY = e.clientY;
+        }
+        let x = (clientX - rect.left) * scaleX;
+        let y = (clientY - rect.top) * scaleY;
+        x = Math.min(Math.max(0, x), canvas.width);
+        y = Math.min(Math.max(0, y), canvas.height);
+        return { x, y };
+      };
 
-    // draw rich golden scratch cover layer with noise and shimmer
-    function drawGoldTexture() {
-      if (!ctx) return;
-      const w = canvas.width;
-      const h = canvas.height;
-      // metallic gold gradient
-      const grad = ctx.createLinearGradient(0, 0, w, h);
-      grad.addColorStop(0, '#c99e2e');
-      grad.addColorStop(0.3, '#eac455');
-      grad.addColorStop(0.6, '#b8860b');
-      grad.addColorStop(1, '#ffdf80');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, w, h);
-      // add noise / shimmer effect (tiny sparkles)
-      for (let i = 0; i < 300; i++) {
-        ctx.fillStyle = `rgba(255, 245, 190, ${Math.random() * 0.5})`;
-        ctx.beginPath();
-        ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 2 + 1, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      // add subtle diagonal pattern
-      ctx.beginPath();
-      ctx.strokeStyle = '#f3d572';
-      ctx.lineWidth = 1.5;
-      for (let i = 0; i < 20; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * 35, 0);
-        ctx.lineTo(i * 35 + 25, h);
+      const scratch = (x, y, isStart) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 28;
+        if (isStart) {
+          ctx.beginPath();
+          ctx.arc(x, y, 14, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.lineTo(x, y);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(x, y, 14, 0, Math.PI * 2);
+          ctx.fill();
+        }
         ctx.stroke();
         ctx.beginPath();
-        ctx.moveTo(0, i * 25);
-        ctx.lineTo(w, i * 25 + 15);
-        ctx.stroke();
-      }
-    }
+        ctx.globalCompositeOperation = 'source-over';
+        // check if revealed enough (optional but we set revealed state when major area scratched, but just by interaction)
+        if (!isRevealed) setIsRevealed(true);
+      };
 
-    function getCanvasCoords(e) {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-      let clientX, clientY;
-      if (e.touches) {
-        clientX = e.touches[0].clientX;
-        clientY = e.touches[0].clientY;
-      } else {
-        clientX = e.clientX;
-        clientY = e.clientY;
-      }
-      let canvasX = (clientX - rect.left) * scaleX;
-      let canvasY = (clientY - rect.top) * scaleY;
-      canvasX = Math.min(Math.max(0, canvasX), canvas.width);
-      canvasY = Math.min(Math.max(0, canvasY), canvas.height);
-      return { x: canvasX, y: canvasY };
-    }
+      const handleStart = (e) => {
+        e.preventDefault();
+        setDrawing(true);
+        const coords = getCoordinates(e);
+        if (coords) scratch(coords.x, coords.y, true);
+      };
+      const handleMove = (e) => {
+        if (!drawing) return;
+        e.preventDefault();
+        const coords = getCoordinates(e);
+        if (coords) scratch(coords.x, coords.y, false);
+      };
+      const handleEnd = () => setDrawing(false);
 
-    function drawScratch(x, y, isStart) {
-      if (!ctx) return;
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.lineWidth = 28;  // good scratch width
-      if (isStart) {
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.arc(x, y, 14, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.arc(x, y, 14, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.stroke();
-      ctx.beginPath();
-    }
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        canvas.addEventListener('mousedown', handleStart);
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', handleEnd);
+        canvas.addEventListener('touchstart', handleStart);
+        canvas.addEventListener('touchmove', handleMove);
+        canvas.addEventListener('touchend', handleEnd);
+        return () => {
+          canvas.removeEventListener('mousedown', handleStart);
+          window.removeEventListener('mousemove', handleMove);
+          window.removeEventListener('mouseup', handleEnd);
+          canvas.removeEventListener('touchstart', handleStart);
+          canvas.removeEventListener('touchmove', handleMove);
+          canvas.removeEventListener('touchend', handleEnd);
+        };
+      }, [drawing]);
 
-    function handleStart(e) {
-      e.preventDefault();
-      isDrawing = true;
-      const { x, y } = getCanvasCoords(e);
-      lastX = x; lastY = y;
-      drawScratch(x, y, true);
-    }
+      return (
+        <div className="flex flex-col items-center gap-5 my-8">
+          <div ref={containerRef} className="relative w-80 md:w-96 h-48 rounded-2xl shadow-2xl border border-amber-500/50 overflow-hidden">
+            <div className="absolute inset-0 flex items-center justify-center z-0 bg-black/20 backdrop-blur-sm rounded-2xl">
+              <span className="font-cinzel text-3xl md:text-4xl font-bold text-amber-400 bg-black/50 px-4 py-1 rounded-full">
+                {isRevealed ? "✨ 9 MAY 2026 ✨" : "????"}
+              </span>
+            </div>
+            <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full cursor-grab active:cursor-grabbing z-10 scratch-canvas" />
+          </div>
+          <div className="text-amber-400/80 text-xs md:text-sm bg-black/60 px-4 py-1 rounded-full border border-amber-500/40">
+            🖌️ Scratch the golden surface to reveal the wedding date
+          </div>
+        </div>
+      );
+    };
 
-    function handleMove(e) {
-      if (!isDrawing) return;
-      e.preventDefault();
-      const { x, y } = getCanvasCoords(e);
-      if (Math.hypot(x - lastX, y - lastY) > 2) {
-        drawScratch(x, y, false);
-        lastX = x;
-        lastY = y;
-      }
-    }
+    // Invitation Generator with Download & dynamic name
+    const InvitationGenerator = () => {
+      const [guestName, setGuestName] = useState("");
+      const [generatedCard, setGeneratedCard] = useState(null);
+      const cardRef = useRef(null);
 
-    function handleEnd(e) {
-      isDrawing = false;
-      e.preventDefault();
-      ctx.globalCompositeOperation = 'source-over';
-    }
+      const generateInvitation = () => {
+        let name = guestName.trim();
+        if (name === "") name = "Beloved Guest";
+        setGeneratedCard(name);
+      };
 
-    canvas.addEventListener('mousedown', handleStart);
-    window.addEventListener('mousemove', (e) => {
-      if (isDrawing) handleMove(e);
-    });
-    window.addEventListener('mouseup', handleEnd);
-    canvas.addEventListener('touchstart', handleStart);
-    canvas.addEventListener('touchmove', handleMove);
-    canvas.addEventListener('touchend', handleEnd);
-    canvas.addEventListener('touchcancel', handleEnd);
-    
-    // prevent context menu on canvas
-    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-
-    // Resize observer for canvas to keep texture sharp (on window resize reinit)
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        if (canvas && container) {
-          // important: we need to reinitialize canvas but keep scratching? 
-          // but we want to preserve scratch effect? Actually on resize it's better to reset cover,
-          // otherwise mapping breaks. But we store scratch state? easier: reinit full cover. 
-          // However guests might lose scratches if they rotate. This is minor. Provide fresh scratch
-          // but we also need to preserve reveal? But UX: just reset texture on resize for reliability.
-          // Most devices won't resize during scratching. 
-          const oldWidth = canvas.width;
-          const oldHeight = canvas.height;
-          initCanvasSize();
-          // remove previous scratches to avoid glitches. This is user-friendly, they can scratch again.
-          // Provide subtle note: but it's okay since scratch is interactive and fun.
+      const downloadAsImage = async () => {
+        if (!cardRef.current) return;
+        try {
+          const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: '#0a0a0a' });
+          const link = document.createElement('a');
+          link.download = `invitation_${guestName.replace(/\s/g, '_') || 'guest'}.png`;
+          link.href = canvas.toDataURL();
+          link.click();
+        } catch (err) {
+          alert("Could not download. Please try again.");
         }
-      }, 200);
-    });
+      };
 
-    // initial setup of canvas texture
-    function setupCanvasAfterLoad() {
-      initCanvasSize();
-    }
-    setupCanvasAfterLoad();
-    // ensure when images/fonts loaded
-    window.addEventListener('load', () => {
-      setupCanvasAfterLoad();
-    });
+      return (
+        <div className="bg-black/60 backdrop-blur-sm rounded-3xl p-6 md:p-8 border border-amber-500/40 shadow-xl">
+          <div className="flex flex-col md:flex-row gap-5 items-center justify-center mb-8">
+            <input 
+              type="text"
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value)}
+              placeholder="Enter your name, e.g., Mr. & Mrs. Kapoor"
+              className="w-full md:w-80 bg-neutral-900 border border-amber-500/60 rounded-full px-6 py-3 text-white font-montserrat focus:outline-none focus:ring-2 focus:ring-amber-400 transition"
+            />
+            <button onClick={generateInvitation} className="bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 text-black font-cinzel font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105">
+              ✨ Generate Invitation ✨
+            </button>
+          </div>
+          {generatedCard && (
+            <div className="flex flex-col items-center gap-6">
+              <div ref={cardRef} className="digital-card w-full max-w-lg bg-gradient-to-br from-neutral-900 to-black border-2 border-amber-500 rounded-2xl p-6 relative overflow-hidden bg-blue-rose-pattern">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+                <div className="text-center">
+                  <div className="font-cinzel text-2xl text-amber-400 tracking-wide">— WEDDING INVITATION —</div>
+                  <div className="border-t border-b border-amber-500/50 my-4 py-2">
+                    <div className="font-cinzel text-xl text-amber-300">Farooq Ahmad & Naazra Khatoon</div>
+                  </div>
+                  <div className="font-montserrat text-amber-200/90 text-sm">Request the pleasure of your company at their wedding ceremony</div>
+                  <div className="my-3 text-yellow-400 font-cinzel text-lg">✨ 9th May, 2026 | 8:00 PM ✨</div>
+                  <div className="bg-amber-900/30 rounded-xl p-3 my-2">
+                    <div className="font-cinzel text-amber-300 text-2xl break-words">✨ {generatedCard} ✨</div>
+                    <div className="text-xs text-amber-400/70 mt-1">You are cordially invited</div>
+                  </div>
+                  <div className="mt-3 text-amber-400/80 text-sm">Venue: The Royal Garden, Bigahna, Hamirpur<br />Reception & Dinner</div>
+                  <div className="mt-2 text-amber-500 text-xs border-t border-amber-500/30 pt-2">Blue Rose Ceremony | Traditional Blessings</div>
+                </div>
+                <div className="absolute bottom-2 right-3 opacity-30 text-amber-400 text-xs">F&N</div>
+              </div>
+              <button onClick={downloadAsImage} className="flex items-center gap-2 bg-black border border-amber-500 text-amber-400 px-6 py-2 rounded-full hover:bg-amber-900/30 transition font-montserrat font-semibold">
+                📸 Download Invitation as Image
+              </button>
+            </div>
+          )}
+        </div>
+      );
+    };
 
-    // -------------------------------
-    // 3. INVITATION GENERATOR (dynamic card with guest name, blue roses theme)
-    // -------------------------------
-    const generateBtn = document.getElementById('generateInviteBtn');
-    const guestInput = document.getElementById('guestNameInput');
-    const invitationContainer = document.getElementById('invitationCardContainer');
+    // Ceremony Details + Guest House Location & Timing
+    const EventDetails = () => (
+      <div className="grid md:grid-cols-2 gap-6 my-10">
+        <div className="bg-black/40 border border-amber-500/30 rounded-2xl p-6 backdrop-blur-sm text-center">
+          <div className="font-cinzel text-2xl text-amber-400 mb-3">💒 Wedding Ceremony</div>
+          <div className="text-amber-200 text-lg">📅 9 May 2026 (Saturday)</div>
+          <div className="text-amber-200/90 mt-2">⏰ 8:00 PM - 10:30 PM</div>
+          <div className="text-amber-200/80 mt-1">📍 Venue: Royal Lawn, Bigahna, Maudaha, Hamirpur</div>
+          <div className="mt-3 text-amber-400/70 text-sm">Followed by grand dinner & blessings</div>
+        </div>
+        <div className="bg-black/40 border border-amber-500/30 rounded-2xl p-6 backdrop-blur-sm text-center">
+          <div className="font-cinzel text-2xl text-amber-400 mb-3">🏨 Guest House & Accommodation</div>
+          <div className="text-amber-200 text-lg">Maqbool Palace Guest Wing</div>
+          <div className="text-amber-200/80 mt-2">📍 Bigahna Main Road, Maudaha, Hamirpur (Adjacent to venue)</div>
+          <div className="text-amber-400/70 text-sm mt-2">Complimentary stay for outstation guests | Check-in: 5 May 2026</div>
+          <div className="text-amber-500/80 text-xs mt-3">For assistance contact: +91 98765 43210</div>
+        </div>
+      </div>
+    );
 
-    function createInvitationCard(guestName) {
-      if (!guestName || guestName.trim() === "") {
-        guestName = "Beloved Guest";
-      } else {
-        guestName = guestName.trim();
-      }
-      // build fresh card with blue roses motif & gold border
-      const cardDiv = document.createElement('div');
-      cardDiv.className = 'digital-card';
-      cardDiv.style.animation = 'fadeInScale 0.4s ease';
-      cardDiv.innerHTML = `
-        <div class="card-title">— WEDDING INVITATION —</div>
-        <div class="gold-border-accent"></div>
-        <div class="card-couple">Farooq Ahmad & Naazra Khatoon</div>
-        <div class="card-date">9th May, 2026 | 8 PM onwards</div>
-        <div class="guest-name-special" id="dynamicGuestSpan">${escapeHtml(guestName)}</div>
-        <div class="card-footer-inv">"Together with families request the honor of your presence<br> at the auspicious union"</div>
-        <div class="gold-border-accent" style="margin-top:0.8rem;"></div>
-        <div style="font-size:0.75rem; margin-top:0.7rem; color:#c7aa4a;">Blue Rose Ceremony • Traditional Blessings</div>
-      `;
-      return cardDiv;
-    }
+    // Footer Component
+    const Footer = () => (
+      <footer className="text-center py-8 border-t border-amber-500/30 mt-10">
+        <div className="font-cinzel text-amber-400 text-sm">Hosted by Maqbool Ahmad</div>
+        <div className="text-amber-500/80 text-xs mt-1">📍 Bigahna, Maudaha, Hamirpur, Uttar Pradesh</div>
+        <div className="text-amber-600/50 text-[11px] mt-3">✨ Eternal Blessings & Joy ✨</div>
+      </footer>
+    );
 
-    // simple escape to avoid XSS
-    function escapeHtml(str) {
-      return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-      }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-        return c;
-      });
-    }
+    // Main App with Intersection Observer animations
+    const App = () => {
+      const [loading, setLoading] = useState(true);
+      const sectionsRef = useRef([]);
 
-    function updateInvitation(guestName) {
-      invitationContainer.innerHTML = '';
-      const newCard = createInvitationCard(guestName);
-      invitationContainer.appendChild(newCard);
-      // add small animation
-      newCard.style.transform = 'scale(0.98)';
-      setTimeout(() => { newCard.style.transform = 'scale(1)'; }, 50);
-    }
-
-    generateBtn.addEventListener('click', () => {
-      let name = guestInput.value;
-      if (name.trim() === "") {
-        name = "Honored Guest";
-        guestInput.value = name;
-      }
-      updateInvitation(name);
-    });
-
-    // default on load: show a placeholder with generic text but elegant
-    updateInvitation("Your Name");
-    // add placeholder improvement
-    guestInput.placeholder = "e.g., Mr. & Mrs. Sharma";
-
-    // -------------------------------
-    // 4. SMOOTH SCROLL ANIMATIONS (Intersection Observer)
-    // -------------------------------
-    const fadeElements = document.querySelectorAll('.fade-up');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
+      useEffect(() => {
+        if (!loading) {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('animate-fade-up');
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.2 });
+          sectionsRef.current.forEach(section => {
+            if (section) observer.observe(section);
+          });
+          return () => observer.disconnect();
         }
-      });
-    }, { threshold: 0.2, rootMargin: "0px 0px -40px 0px" });
-    fadeElements.forEach(el => observer.observe(el));
+      }, [loading]);
 
-    // additional style for smooth card entrance
-    const styleAnim = document.createElement('style');
-    styleAnim.textContent = `
-      @keyframes fadeInScale {
-        0% { opacity: 0; transform: scale(0.96); }
-        100% { opacity: 1; transform: scale(1); }
-      }
-      .digital-card {
-        transition: transform 0.2s ease, box-shadow 0.2s;
-      }
-      .digital-card:hover {
-        box-shadow: 0 25px 35px -15px rgba(212,175,55,0.3);
-        transform: translateY(-3px);
-      }
-    `;
-    document.head.appendChild(styleAnim);
-    
-    // Fix scratch canvas on dynamic loads (ensure if container changes after resize, already handled)
-    // Additional insurance: re-init canvas on visibility change
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && canvas.width > 0 && canvas.height > 0) {
-        // ensure texture looks correct if it somehow got cleared
-        const currentData = ctx.getImageData(0,0, canvas.width, canvas.height).data;
-        let isMostlyTransparent = true;
-        for(let i=3; i<currentData.length; i+=4) {
-          if(currentData[i] > 50) { isMostlyTransparent = false; break; }
-        }
-        if(isMostlyTransparent) {
-          drawGoldTexture();
-        }
-      }
-    });
-  })();
-</script>
+      const addToRefs = (el) => {
+        if (el && !sectionsRef.current.includes(el)) sectionsRef.current.push(el);
+      };
+
+      if (loading) return <Loader onComplete={() => setLoading(false)} />;
+      return (
+        <div className="bg-black min-h-screen">
+          <div className="container mx-auto px-4 md:px-8 max-w-6xl">
+            <div ref={addToRefs} className="opacity-0 translate-y-8 transition-all duration-700"><Hero /></div>
+            
+            <div ref={addToRefs} className="opacity-0 translate-y-8 transition-all duration-700 my-8">
+              <h2 className="font-cinzel text-3xl md:text-4xl text-center text-amber-400 mb-2">Save the Date</h2>
+              <ScratchCard />
+            </div>
+
+            <div ref={addToRefs} className="opacity-0 translate-y-8 transition-all duration-700 my-12">
+              <h2 className="font-cinzel text-3xl md:text-4xl text-center text-amber-400 mb-6">Your Personal Invitation</h2>
+              <InvitationGenerator />
+            </div>
+
+            <div ref={addToRefs} className="opacity-0 translate-y-8 transition-all duration-700 my-12">
+              <h2 className="font-cinzel text-3xl md:text-4xl text-center text-amber-400 mb-6">Ceremony & Hospitality</h2>
+              <EventDetails />
+            </div>
+
+            <div ref={addToRefs} className="opacity-0 translate-y-8 transition-all duration-700">
+              <Footer />
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
 </body>
 </html>
